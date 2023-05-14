@@ -52,4 +52,4 @@ def start_bot(message):
     while(True):
         bot.send_message(message.chat.id, table, time.sleep(60))
 	
-bot.infinity_polling()
+bot.polling(none_stop=True)
