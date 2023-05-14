@@ -45,11 +45,11 @@ def create_table():
 @bot.message_handler(commands=['start'])
 def start_bot(message):
     bot.send_message(message.chat.id, f'Добро пожаловать @{message.from_user.username}!')
-    
+
     table = create_table()
     bot.send_message(message.chat.id, table)
     
     while(True):
         bot.send_message(message.chat.id, table, time.sleep(60))
 	
-bot.polling()
+bot.infinity_polling()
