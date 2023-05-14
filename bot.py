@@ -42,16 +42,11 @@ def create_table():
     content = f'<pre>{table}</pre>'
     return content
 
-@bot.message_handler(commands=['lol'])
-def start(message):
-    # table = create_table()
-    bot.send_message(message.chat.id, f'Добро пожаловать @{message.from_user.username}!')
-
 @bot.message_handler(commands=['start'])
 def start_bot(message):
-    table = create_table()
-
     bot.send_message(message.chat.id, f'Добро пожаловать @{message.from_user.username}!')
+    
+    table = create_table()
     bot.send_message(message.chat.id, table)
     
     while(True):
