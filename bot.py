@@ -46,7 +46,7 @@ def create_table():
 def start_bot(message):
     table = create_table()
 
-    bot.send_message(message.chat.id, f'Добро пожаловать {message.from_user.first_name}!')
+    bot.send_message(message.chat.id, f'Добро пожаловать {message.from_user.username}!')
     bot.send_message(message.chat.id, table)
     
     while(True):
