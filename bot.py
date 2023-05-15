@@ -44,13 +44,13 @@ def create_table():
 
 @bot.message_handler(commands=['start'])
 def start_bot(message):
-    bot.send_message(message.chat.id, f'Добро пожаловать @{message.from_user.username}!')
+    bot.send_message(message.from_user.id, f'Добро пожаловать @{message.from_user.username}!')
 
     table = create_table()
-    bot.send_message(message.chat.id, table)
+    bot.send_message(message.from_user.id, table)
     
     while(True):
         table_updated = create_table()
-        bot.send_message(message.chat.id, table_updated, time.sleep(60))
+        bot.send_message(message.from_user.id, table_updated, time.sleep(60))
 	
 bot.polling(none_stop=True)
