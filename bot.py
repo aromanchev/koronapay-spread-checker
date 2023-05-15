@@ -17,7 +17,7 @@ def calculate_spread(sending_amount, rate, binance_rate):
     return round(spread, 2)
 
 
-def create_table():
+async def create_table():
     exchangers = api_requests.get_exchangers()
 
     binance_p2p_rate = float(api_requests.get_binance_p2p_rate())
@@ -50,10 +50,10 @@ def create_table():
 async def start_bot(message):
     await bot.send_message(
         message.chat.id, f'Добро пожаловать @{message.from_user.username}!')
-    table = create_table()
+    table = await create_table()
     await bot.send_message(message.chat.id, table)
     while (True):
-        table_updated = create_table()
+        table_updated = await create_table()
         await bot.send_message(message.chat.id, table_updated)
         await asyncio.sleep(60)
 
