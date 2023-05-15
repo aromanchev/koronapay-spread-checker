@@ -53,9 +53,9 @@ async def start_bot(message):
     table = await create_table()
     await bot.send_message(message.chat.id, table)
     while (True):
+        await asyncio.sleep(60)
         table_updated = await create_table()
         await bot.send_message(message.chat.id, table_updated)
-        await asyncio.sleep(60)
 
 
 asyncio.run(bot.polling())
