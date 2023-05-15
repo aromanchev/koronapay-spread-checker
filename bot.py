@@ -9,6 +9,17 @@ TOKEN = os.environ["TOKEN"]
 bot = telebot.TeleBot(TOKEN, parse_mode="HTML")
 
 
+@bot.message_handler(commands=['start'])
+def start_bot(message):
+    bot.send_message(
+        message.from_user.id, f'Добро пожаловать @{message.from_user.username}!')
+    table = create_table()
+    bot.send_message(message.chat.id, table)
+    while (True):
+        table_updated = create_table()
+        bot.send_message(message.chat.id, table_updated, time.sleep(90))
+
+
 def calculate_spread(sending_amount, rate, binance_rate):
     receiving_amount = constants.KORONA_RECEIVING_AMOUNT / 100
     total_usd = receiving_amount / rate
@@ -44,22 +55,6 @@ def create_table():
 
     content = f'<pre>{table}</pre>'
     return content
-
-
-@bot.message_handler(commands=['start'])
-def start_bot(message):
-    bot.send_message(
-        message.chat.id, f'Добро пожаловать @{message.from_user.username}! Для того чтобы посмотреть спред напишите /spread')
-
-
-@bot.message_handler(commands=['spread'])
-def spread_command(message):
-    table = create_table()
-    bot.send_message(message.chat.id, table)
-
-    while (True):
-        table_updated = create_table()
-        bot.send_message(message.chat.id, table_updated, time.sleep(90))
 
 
 bot.polling(none_stop=True)
