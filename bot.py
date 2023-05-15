@@ -51,8 +51,8 @@ async def start_bot(message):
     await bot.send_message(message.chat.id, f'Добро пожаловать @{message.from_user.username}!')
     table = create_table()
     await bot.send_message(message.chat.id, table)
+    await asyncio.sleep(60)
     while (True):
-        await asyncio.sleep(60)
         table_updated = await create_table()
         await bot.send_message(message.chat.id, table_updated)
 
