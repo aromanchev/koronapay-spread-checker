@@ -50,6 +50,7 @@ def start_bot(message):
     bot.send_message(message.chat.id, table)
     
     while(True):
-        bot.send_message(message.chat.id, table, time.sleep(60))
+        table_updated = create_table()
+        bot.send_message(message.chat.id, table_updated, time.sleep(60))
 	
 bot.polling(none_stop=True)
