@@ -12,7 +12,6 @@ def calculate_spread(sending_amount, rate, binance_rate):
     receiving_amount = constants.KORONA_RECEIVING_AMOUNT / 100
     total_usd = receiving_amount / rate
     binance_total_amount = total_usd * binance_rate
-    print(binance_total_amount)
     spread = 100 - (sending_amount / binance_total_amount * 100)
     return round(spread, 2)
 
