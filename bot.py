@@ -49,11 +49,9 @@ def create_table():
 @bot.message_handler(commands=['start'])
 async def start_bot(message):
     await bot.send_message(message.chat.id, f'Добро пожаловать @{message.from_user.username}!')
-    table = create_table()
-    await bot.send_message(message.chat.id, table)
-    await asyncio.sleep(60)
     while (True):
-        table_updated = await create_table()
+        table_updated = create_table()
         await bot.send_message(message.chat.id, table_updated)
+        await asyncio.sleep(60)
 
 asyncio.run(bot.infinity_polling())
