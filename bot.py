@@ -49,12 +49,12 @@ async def bot_polling():
         try:
             bot = AsyncTeleBot(TOKEN, parse_mode="HTML")
             bot_actions(bot)
-            await asyncio.run(bot.polling(none_stop=True, interval=constants.BOT_INTERVAL, timeout=constants.BOT_TIMEOUT))
+            asyncio.run(bot.polling(none_stop=True, interval=constants.BOT_INTERVAL, timeout=constants.BOT_TIMEOUT))
         except Exception as ex: #Error in polling
-            await asyncio.run(bot.stop_polling())
+            asyncio.run(bot.stop_polling())
             await asyncio.sleep(constants.BOT_TIMEOUT)
         else:
-            await asyncio.run(bot.stop_polling())
+            asyncio.run(bot.stop_polling())
             break
 
 def bot_actions(bot):
