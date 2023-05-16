@@ -54,4 +54,8 @@ async def start_bot(message):
         await bot.send_message(message.chat.id, table_updated)
         await asyncio.sleep(60)
 
-asyncio.run(bot.polling(none_stop=True))
+while(True):
+    try:
+        asyncio.run(bot.infinity_polling())
+    except:
+        pass
