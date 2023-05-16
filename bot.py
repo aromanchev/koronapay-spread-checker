@@ -56,6 +56,6 @@ async def start_bot(message):
 
 while(True):
     try:
-        asyncio.run(bot.infinity_polling())
+        asyncio.run(bot.infinity_polling(timeout=10, long_polling_timeout=5))
     except:
         pass
