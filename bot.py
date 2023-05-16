@@ -1,5 +1,4 @@
 import asyncio
-import time
 import prettytable
 from telebot.async_telebot import AsyncTeleBot
 import constants
