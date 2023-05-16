@@ -10,7 +10,7 @@ TOKEN = os.environ["TOKEN"]
 bot = AsyncTeleBot(TOKEN, parse_mode="HTML")
 
 
-def calculate_spread(sending_amount, rate, binance_rate):
+def calculate_spread(sending_amount: int, rate: int, binance_rate: int):
     receiving_amount = constants.KORONA_RECEIVING_AMOUNT / 100
     total_usd = receiving_amount / rate
     binance_total_amount = total_usd * binance_rate
@@ -55,8 +55,4 @@ async def start_bot(message):
         await bot.send_message(message.chat.id, table)
         await asyncio.sleep(60)
 
-while(True):
-    try:
-        asyncio.run(bot.infinity_polling())
-    except:
-        time.sleep(5)
+asyncio.run(bot.infinity_polling())
