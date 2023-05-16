@@ -1,4 +1,5 @@
 import asyncio
+import time
 import prettytable
 from telebot.async_telebot import AsyncTeleBot
 import constants
@@ -50,12 +51,12 @@ def create_table():
 async def start_bot(message):
     await bot.send_message(message.chat.id, f'Добро пожаловать @{message.from_user.username}!')
     while (True):
-        table_updated = create_table()
-        await bot.send_message(message.chat.id, table_updated)
+        table = create_table()
+        await bot.send_message(message.chat.id, table)
         await asyncio.sleep(60)
 
 while(True):
     try:
-        asyncio.run(bot.polling(non_stop=True, interval=1, timeout=0))
+        asyncio.run(bot.infinity_polling())
     except:
-        asyncio.sleep(5)
+        time.sleep(5)
