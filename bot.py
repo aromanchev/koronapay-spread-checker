@@ -55,4 +55,4 @@ async def start_bot(message):
         await bot.send_message(message.chat.id, table)
         await asyncio.sleep(60)
 
-asyncio.run(bot.infinity_polling())
+asyncio.run(bot.polling(none_stop=True, timeout=999999))
