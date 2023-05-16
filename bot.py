@@ -6,8 +6,6 @@ import os
 import api_requests
 
 TOKEN = os.environ["TOKEN"]
-bot = AsyncTeleBot(TOKEN, parse_mode="HTML")
-
 
 def calculate_spread(sending_amount, rate, binance_rate):
     receiving_amount = constants.KORONA_RECEIVING_AMOUNT / 100
@@ -45,13 +43,28 @@ def create_table():
     content = f'<pre>{table}</pre>'
     return content
 
+async def bot_polling():
+    print("Starting bot polling now")
+    while True:
+        try:
+            bot = AsyncTeleBot(TOKEN, parse_mode="HTML")
+            bot_actions(bot)
+            await asyncio.run(bot.polling(none_stop=True, interval=constants.BOT_INTERVAL, timeout=constants.BOT_TIMEOUT))
+        except Exception as ex: #Error in polling
+            bot.stop_polling()
+            await asyncio.sleep(constants.BOT_TIMEOUT)
+        else:
+            bot.stop_polling()
+            print("Bot polling loop finished")
+            break
 
-@bot.message_handler(commands=['start'])
-async def start_bot(message):
-    await bot.send_message(message.chat.id, f'Добро пожаловать @{message.from_user.username}!')
-    while (True):
-        table_updated = create_table()
-        await bot.send_message(message.chat.id, table_updated)
-        await asyncio.sleep(60)
+def bot_actions(bot):
+    @bot.message_handler(commands=["start"])
+    async def start_bot(message):
+        await bot.send_message(message.chat.id, f'Добро пожаловать @{message.from_user.username}!')
+        while (True):
+            table_updated = create_table()
+            await bot.send_message(message.chat.id, table_updated)
+            await asyncio.sleep(60)
 
-asyncio.run(bot.infinity_polling())
+bot_polling()

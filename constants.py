@@ -26,3 +26,6 @@ BINANCE_API_PAYLOAD = {
   'rows': 10,
   'tradeType': 'sell'
 }
+
+BOT_INTERVAL = 2
+BOT_TIMEOUT = 10
