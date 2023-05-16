@@ -51,11 +51,10 @@ async def bot_polling():
             bot_actions(bot)
             await asyncio.run(bot.polling(none_stop=True, interval=constants.BOT_INTERVAL, timeout=constants.BOT_TIMEOUT))
         except Exception as ex: #Error in polling
-            bot.stop_polling()
+            await asyncio.run(bot.stop_polling())
             await asyncio.sleep(constants.BOT_TIMEOUT)
         else:
-            bot.stop_polling()
-            print("Bot polling loop finished")
+            await asyncio.run(bot.stop_polling())
             break
 
 def bot_actions(bot):
