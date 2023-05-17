@@ -57,7 +57,7 @@ async def start_bot(message):
 
 while True:
     try:
-        asyncio.run(bot.polling(none_stop=True, timeout=9999, interval=5))
+        asyncio.run(bot.polling(none_stop=True, timeout=150, interval=5))
     except Exception as error:
         time.sleep(5)
         continue
