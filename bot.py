@@ -59,5 +59,6 @@ while True:
     try:
         asyncio.run(bot.polling(none_stop=True, timeout=9999999, interval=5))
     except Exception as error:
+        print(error)
         time.sleep(5)
         continue
