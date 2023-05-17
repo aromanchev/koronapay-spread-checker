@@ -10,7 +10,7 @@ KORONA_API_QUERY = {
     'paymentMethod': 'debitCard',
     'receivingAmount': 400000,
     'receivingMethod': 'cash',
-    'paidNotificationEnabled': False
+    'paidNotificationEnabled': 'False'
 }
 KORONA_API_HEADERS = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36'}
 
@@ -19,7 +19,7 @@ BINANCE_API_PAYLOAD = {
   'asset': 'USDT',
   'fiat': 'RUB',
   'countries': ['RU'],
-  'merchantCheck': False,
+  'merchantCheck': 'False',
   'page': 1,
   'payTypes': ['TinkoffNew', 'RaiffeisenBank'],
   'publisherType': None,
