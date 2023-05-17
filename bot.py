@@ -1,7 +1,6 @@
 import asyncio
 import prettytable
 from telebot.async_telebot import AsyncTeleBot
-import time
 import constants
 import os
 import api_requests
@@ -57,7 +56,6 @@ async def start_bot(message):
 
 while True:
     try:
-        asyncio.run(bot.polling(none_stop=True, timeout=90))
-    except Exception as error:
-        time.sleep(10)
-        continue
+        asyncio.run(bot.polling(none_stop=True, timeout=60, interval=1))
+    except:
+        pass
