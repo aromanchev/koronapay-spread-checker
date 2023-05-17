@@ -56,6 +56,6 @@ async def start_bot(message):
 
 while True:
     try:
-        asyncio.run(bot.polling(none_stop=True, timeout=9999999, interval=5))
+        asyncio.run(bot.polling(none_stop=True, timeout=300, interval=5))
     except (telebot.apihelper.ApiException, Exception) as error:
         print(error)
