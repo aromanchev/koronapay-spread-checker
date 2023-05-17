@@ -1,6 +1,7 @@
 import asyncio
 import prettytable
 from telebot.async_telebot import AsyncTeleBot
+import time
 import constants
 import os
 import api_requests
@@ -52,6 +53,11 @@ async def start_bot(message):
     while (True):
         table = create_table()
         await bot.send_message(message.chat.id, table)
-        await asyncio.sleep(120)
+        await asyncio.sleep(150)
 
-asyncio.run(bot.polling(none_stop=True, timeout=120, interval=3))
+while True:
+    try:
+        asyncio.run(bot.polling(none_stop=True, timeout=9999, interval=5))
+    except Exception as error:
+        time.sleep(5)
+        continue
