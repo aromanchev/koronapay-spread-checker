@@ -55,4 +55,9 @@ async def start_bot(message):
         await bot.send_message(message.chat.id, table)
         await asyncio.sleep(60)
 
-asyncio.run(bot.polling(none_stop=True, timeout=999999))
+while True:
+    try:
+        asyncio.run(bot.polling(none_stop=True, timeout=90))
+    except Exception as error:
+        time.sleep(10)
+        continue
