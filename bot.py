@@ -52,10 +52,6 @@ async def start_bot(message):
     while (True):
         table = create_table()
         await bot.send_message(message.chat.id, table)
-        await asyncio.sleep(60)
+        await asyncio.sleep(120)
 
-while True:
-    try:
-        asyncio.run(bot.polling(none_stop=True, timeout=60, interval=1))
-    except:
-        pass
+asyncio.run(bot.polling(none_stop=True, timeout=120, interval=3))
