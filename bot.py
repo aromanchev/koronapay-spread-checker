@@ -1,12 +1,13 @@
 import asyncio
 import prettytable
+from telebot.async_telebot import AsyncTeleBot
 import telebot
 import constants
 import os
 import api_requests
 
 TOKEN = os.environ["TOKEN"]
-bot = telebot.async_telebot.AsyncTeleBot(TOKEN, parse_mode="HTML")
+bot = AsyncTeleBot(TOKEN, parse_mode="HTML")
 
 
 def calculate_spread(sending_amount: int, rate: int, binance_rate: int):
@@ -56,6 +57,6 @@ async def start_bot(message):
 
 while True:
     try:
-        asyncio.run(bot.polling(none_stop=True, timeout=300, interval=5))
+        asyncio.run(bot.polling(none_stop=True, timeout=9999999, interval=5))
     except (telebot.apihelper.ApiException, Exception) as error:
         print(error)
