@@ -7,8 +7,6 @@ import os
 import api_requests
 
 TOKEN = os.environ['TOKEN']
-PORT = int(os.environ.get('PORT', '8443'))
-APP_NAME = os.environ['APP_NAME']
 
 updater = Updater(TOKEN, use_context=True)
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -64,7 +62,6 @@ def spread_auto_messaging(context):
 
 dispatcher = updater.dispatcher
 dispatcher.add_handler(CommandHandler("start", start_bot))
-updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=TOKEN, webhook_url=APP_NAME + TOKEN)
 
 
 updater.start_polling()
