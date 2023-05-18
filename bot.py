@@ -1,14 +1,15 @@
-import asyncio
+import logging
 import prettytable
-from telebot.async_telebot import AsyncTeleBot
-import telebot
+from telegram.ext import Updater, CommandHandler
+from telegram import ParseMode
 import constants
 import os
 import api_requests
 
 TOKEN = os.environ["TOKEN"]
-bot = AsyncTeleBot(TOKEN, parse_mode="HTML")
-
+updater = Updater(TOKEN, use_context=True)
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def calculate_spread(sending_amount: int, rate: int, binance_rate: int):
     receiving_amount = constants.KORONA_RECEIVING_AMOUNT / 100
@@ -46,17 +47,20 @@ def create_table():
     content = f'<pre>{table}</pre>'
     return content
 
+def start_bot(update, context):
+    table = create_table()
+    context.bot.send_message(chat_id=update.effective_chat.id, text=f'Добро пожаловать @{update.message.from_user.username}!')
+    context.bot.send_message(chat_id=update.effective_chat.id, text=f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
+    context.job_queue.run_repeating(auto_messaging, 180, context=update.message.chat_id)
 
-@bot.message_handler(commands=['start'])
-async def start_bot(message):
-    await bot.send_message(message.chat.id, f'Добро пожаловать @{message.from_user.username}!')
-    while (True):
-        table = create_table()
-        await bot.send_message(message.chat.id, table)
-        await asyncio.sleep(300)
 
-while True:
-    try:
-        asyncio.run(bot.polling(none_stop=True, timeout=9999999, interval=5))
-    except (telebot.apihelper.ApiException, Exception) as error:
-        print(error)
+def auto_messaging(context):
+    table = create_table()
+    context.bot.send_message(chat_id=context.job.context, text=f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
+
+
+dispatcher = updater.dispatcher
+dispatcher.add_handler(CommandHandler("start", start_bot))
+
+updater.start_polling()
+updater.idle()
