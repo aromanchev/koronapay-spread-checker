@@ -51,10 +51,10 @@ def start_bot(update, context):
     table = create_table()
     context.bot.send_message(chat_id=update.effective_chat.id, text=f'Добро пожаловать @{update.message.from_user.username}!')
     context.bot.send_message(chat_id=update.effective_chat.id, text=f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
-    context.job_queue.run_repeating(auto_messaging, 180, context=update.message.chat_id)
+    context.job_queue.run_repeating(spread_auto_messaging, 180, context=update.message.chat_id)
 
 
-def auto_messaging(context):
+def spread_auto_messaging(context):
     table = create_table()
     context.bot.send_message(chat_id=context.job.context, text=f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
 
