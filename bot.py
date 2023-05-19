@@ -1,6 +1,7 @@
 import logging
 import prettytable
 from telegram.ext import Updater, CommandHandler
+from telegram.ext.dispatcher import run_async
 from telegram import ParseMode
 import constants
 import os
@@ -47,13 +48,14 @@ def create_table():
     content = f'<pre>{table}</pre>'
     return content
 
+@run_async
 def start_bot(update, context):
     table = create_table()
     context.bot.send_message(chat_id=update.effective_chat.id, text=f'Добро пожаловать @{update.message.from_user.username}!')
     context.bot.send_message(chat_id=update.effective_chat.id, text=f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
     context.job_queue.run_repeating(spread_auto_messaging, 180, context=update.message.chat_id)
 
-
+@run_async
 def spread_auto_messaging(context):
     table = create_table()
     context.bot.send_message(chat_id=context.job.context, text=f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
