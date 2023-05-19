@@ -51,7 +51,7 @@ async def start_bot(update, context):
     table = create_table()
     await context.bot.send_message(chat_id=update.effective_chat.id, text=f'Добро пожаловать @{update.message.from_user.username}!')
     await context.bot.send_message(chat_id=update.effective_chat.id, text=f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
-    context.job_queue.run_repeating(spread_auto_messaging, 180, chat_id=update.message.chat_id)
+    context.job_queue.run_repeating(spread_auto_messaging, 120, chat_id=update.message.chat_id)
 
 async def spread_auto_messaging(context):
     job = context.job
