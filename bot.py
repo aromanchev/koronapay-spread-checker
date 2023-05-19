@@ -1,13 +1,13 @@
 import logging
 import prettytable
-from telegram.ext import Updater, CommandHandler
-from telegram import ParseMode
+from telegram.ext import Application, CommandHandler
+from telegram.constants import ParseMode
 import constants
 import os
 import api_requests
 
 TOKEN = os.environ["TOKEN"]
-updater = Updater(TOKEN, use_context=True)
+application = Application.builder().token(TOKEN).build()
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -47,19 +47,18 @@ def create_table():
     content = f'<pre>{table}</pre>'
     return content
 
-def start_bot(update, context):
+async def start_bot(update, context):
     table = create_table()
-    context.bot.send_message(chat_id=update.effective_chat.id, text=f'Добро пожаловать @{update.message.from_user.username}!')
-    context.bot.send_message(chat_id=update.effective_chat.id, text=f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
-    context.job_queue.run_repeating(spread_auto_messaging, 180, context=update.message.chat_id)
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=f'Добро пожаловать @{update.message.from_user.username}!')
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
+    context.job_queue.run_repeating(spread_auto_messaging, 180, chat_id=update.message.chat_id)
 
-def spread_auto_messaging(context):
+async def spread_auto_messaging(context):
+    job = context.job
     table = create_table()
-    context.bot.send_message(chat_id=context.job.context, text=f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
+    await context.bot.send_message(chat_id=job.chat_id, text=f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
 
 
-dispatcher = updater.dispatcher
-dispatcher.add_handler(CommandHandler("start", start_bot, run_async=True))
+application.add_handler(CommandHandler("start", start_bot))
 
-updater.start_polling()
-updater.idle()
+application.run_polling()
