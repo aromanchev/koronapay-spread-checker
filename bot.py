@@ -8,9 +8,10 @@ import os
 import api_requests
 
 TOKEN = os.environ["TOKEN"]
-application = Application.builder().token(TOKEN).build()
+application = Application.builder().token(TOKEN).read_timeout(7).get_updates_read_timeout(42).build()
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-logger = logging.getLogger(__name__)
+aps_logger = logging.getLogger('apscheduler')
+aps_logger.setLevel(logging.WARNING)
 
 def remove_job_if_exists(name: str, context: ContextTypes.DEFAULT_TYPE) -> bool:
     """Remove job with given name. Returns whether job was removed."""
@@ -63,7 +64,7 @@ async def start_bot(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await context.bot.send_message(chat_id=chat_id, text=f'Добро пожаловать @{update.message.from_user.username}!')
     await context.bot.send_message(chat_id=chat_id, text=f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
     remove_job_if_exists(str(chat_id), context)
-    context.job_queue.run_repeating(spread_auto_messaging, 300, chat_id=chat_id)
+    context.job_queue.run_repeating(spread_auto_messaging, 10, chat_id=chat_id)
 
 async def spread_auto_messaging(context: ContextTypes.DEFAULT_TYPE) -> None:
     job = context.job

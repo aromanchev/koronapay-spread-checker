@@ -16,7 +16,7 @@ def get_binance_p2p_rate():
             break
     return binance_p2p_rate
 
-def get_exchangers():
+def get_exchangers() -> list[object]:
     response = requests.get(url = constants.EXCHANGE_RATE_API)
     data = response.json()['pageProps']['exchangesStaticProps']['usd']
     return data
