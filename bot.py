@@ -59,6 +59,6 @@ async def spread_auto_messaging(context):
     await context.bot.send_message(chat_id=job.chat_id, text=f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
 
 
-application.add_handler(CommandHandler("start", start_bot))
+application.add_handler(CommandHandler("start", start_bot, job_queue=True))
 
 application.run_polling(drop_pending_updates=True)
