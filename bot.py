@@ -61,4 +61,4 @@ async def spread_auto_messaging(context):
 
 application.add_handler(CommandHandler("start", start_bot))
 
-application.run_polling()
+application.run_polling(poll_interval=3.0, drop_pending_updates=True, close_loop=False)
