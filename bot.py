@@ -1,6 +1,7 @@
 import logging
 import prettytable
-from telegram.ext import Application, CommandHandler
+from telegram import Update
+from telegram.ext import Application, CommandHandler, ContextTypes
 from telegram.constants import ParseMode
 import constants
 import os
@@ -10,6 +11,15 @@ TOKEN = os.environ["TOKEN"]
 application = Application.builder().token(TOKEN).build()
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+def remove_job_if_exists(name: str, context: ContextTypes.DEFAULT_TYPE) -> bool:
+    """Remove job with given name. Returns whether job was removed."""
+    current_jobs = context.job_queue.get_jobs_by_name(name)
+    if not current_jobs:
+        return False
+    for job in current_jobs:
+        job.schedule_removal()
+    return True
 
 def calculate_spread(sending_amount: int, rate: int, binance_rate: int):
     receiving_amount = constants.KORONA_RECEIVING_AMOUNT / 100
@@ -47,18 +57,20 @@ def create_table():
     content = f'<pre>{table}</pre>'
     return content
 
-async def start_bot(update, context):
+async def start_bot(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    chat_id = update.effective_chat.id
     table = create_table()
-    await context.bot.send_message(chat_id=update.effective_chat.id, text=f'Добро пожаловать @{update.message.from_user.username}!')
-    await context.bot.send_message(chat_id=update.effective_chat.id, text=f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
-    context.job_queue.run_repeating(spread_auto_messaging, 300, chat_id=update.message.chat_id)
+    await context.bot.send_message(chat_id=chat_id, text=f'Добро пожаловать @{update.message.from_user.username}!')
+    await context.bot.send_message(chat_id=chat_id, text=f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
+    remove_job_if_exists(str(chat_id), context)
+    context.job_queue.run_repeating(spread_auto_messaging, 300, chat_id=chat_id)
 
-async def spread_auto_messaging(context):
+async def spread_auto_messaging(context: ContextTypes.DEFAULT_TYPE) -> None:
     job = context.job
     table = create_table()
     await context.bot.send_message(chat_id=job.chat_id, text=f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
 
 
-application.add_handler(CommandHandler("start", start_bot, job_queue=True))
+application.add_handler(CommandHandler("start", start_bot))
 
 application.run_polling(drop_pending_updates=True)
