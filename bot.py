@@ -1,14 +1,15 @@
 import logging
+import constants
+import os
+import api_requests
 import prettytable
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 from telegram.constants import ParseMode
-import constants
-import os
-import api_requests
+
 
 TOKEN = os.environ["TOKEN"]
-application = Application.builder().token(TOKEN).read_timeout(7).get_updates_read_timeout(42).build()
+application = Application.builder().token(TOKEN).pool_timeout(60).write_timeout(60).read_timeout(60).get_updates_read_timeout(60).build()
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 aps_logger = logging.getLogger('apscheduler')
 aps_logger.setLevel(logging.WARNING)
