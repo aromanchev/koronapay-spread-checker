@@ -1,17 +1,39 @@
 import logging
 import constants
 import os
-import api_requests
+import requests
+import constants
 import prettytable
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 from telegram.constants import ParseMode
 
-
+# ---------------------------- B0T CONFIG ------------------------------
 TOKEN = os.environ["TOKEN"]
 application = Application.builder().token(TOKEN).read_timeout(60).get_updates_read_timeout(60).build()
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# ---------------------------- API REQUESTS ------------------------------
+def get_koronapay():
+    response = requests.get(url = constants.KORONA_API, params=constants.KORONA_API_QUERY, headers=constants.KORONA_API_HEADERS)
+    data = response.json()
+    return data
+
+def get_binance_p2p_rate():
+    response = requests.post(url = constants.BINANCE_API, json = constants.BINANCE_API_PAYLOAD)
+    data = response.json()
+    for slot in data['data']:
+        seller_rate = int(slot['advertiser']['monthFinishRate'] * 100)
+        if seller_rate > 95:
+            binance_p2p_rate = slot['adv']['price']
+            break
+    return binance_p2p_rate
+
+def get_exchangers() -> list[object]:
+    response = requests.get(url = constants.EXCHANGE_RATE_API)
+    data = response.json()['pageProps']['exchangesStaticProps']['usd']
+    return data
 
 def remove_job_if_exists(name: str, context: ContextTypes.DEFAULT_TYPE) -> bool:
     """Remove job with given name. Returns whether job was removed."""
@@ -22,6 +44,7 @@ def remove_job_if_exists(name: str, context: ContextTypes.DEFAULT_TYPE) -> bool:
         job.schedule_removal()
     return True
 
+# ---------------------------- UTILITY ------------------------------
 def calculate_spread(sending_amount: int, rate: int, binance_rate: int):
     receiving_amount = constants.KORONA_RECEIVING_AMOUNT / 100
     total_usd = receiving_amount / rate
@@ -31,10 +54,10 @@ def calculate_spread(sending_amount: int, rate: int, binance_rate: int):
 
 
 def create_table():
-    exchangers = api_requests.get_exchangers()
+    exchangers = get_exchangers()
 
-    binance_p2p_rate = float(api_requests.get_binance_p2p_rate())
-    korona_pay = api_requests.get_koronapay()
+    binance_p2p_rate = float(get_binance_p2p_rate())
+    korona_pay = get_koronapay()
     korona_pay_exchange_rate = korona_pay[0]['exchangeRate']
     korona_pay_sending_amount = korona_pay[0]['sendingAmount'] / 100
 
@@ -58,6 +81,7 @@ def create_table():
     content = f'<pre>{table}</pre>'
     return content
 
+# ---------------------------- BOT ACTIONS ------------------------------
 async def start_bot(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     chat_id = update.effective_chat.id
     table = create_table()
@@ -79,5 +103,4 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
 
 application.add_handler(CommandHandler("start", start_bot))
 application.add_error_handler(error_handler)
-
 application.run_polling()
