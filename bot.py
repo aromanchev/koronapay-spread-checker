@@ -9,7 +9,6 @@ from telegram.constants import ParseMode
 
 
 TOKEN = os.environ["TOKEN"]
-SECRET_KEY = os.environ["SECRET_KEY"]
 PORT = int(os.environ.get('PORT', '8443'))
 application = Application.builder().token(TOKEN).read_timeout(60).get_updates_read_timeout(60).build()
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
