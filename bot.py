@@ -9,7 +9,6 @@ from telegram.constants import ParseMode
 
 
 TOKEN = os.environ["TOKEN"]
-PORT = int(os.environ.get('PORT', '8443'))
 application = Application.builder().token(TOKEN).read_timeout(60).get_updates_read_timeout(60).build()
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 aps_logger = logging.getLogger('apscheduler')
@@ -73,12 +72,13 @@ async def spread_auto_messaging(context: ContextTypes.DEFAULT_TYPE) -> None:
     table = create_table()
     await context.bot.send_message(chat_id=job.chat_id, text=f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
 
+async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Log the error and send a telegram message to notify the developer."""
+    aps_logger.error("Exception while handling an update:", exc_info=context.error)
+
+    await context.bot.send_message(chat_id=update.effective_chat.id, text='Ошибка:(', parse_mode=ParseMode.HTML)
 
 application.add_handler(CommandHandler("start", start_bot))
+application.add_error_handler(error_handler)
 
-application.run_webhook(
-    listen="0.0.0.0",
-    port=PORT,
-    secret_token='koronapay_spread',
-    webhook_url="https://koronapay-spread.herokuapp.com/"
-)
+application.run_polling()
