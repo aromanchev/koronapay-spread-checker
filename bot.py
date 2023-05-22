@@ -80,6 +80,6 @@ application.add_handler(CommandHandler("start", start_bot))
 application.run_webhook(
     listen="0.0.0.0",
     port=PORT,
-    secret_token=SECRET_KEY,
+    secret_token='koronapay_spread',
     webhook_url="https://koronapay-spread.herokuapp.com/"
 )
