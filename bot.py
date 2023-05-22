@@ -9,7 +9,9 @@ from telegram.constants import ParseMode
 
 
 TOKEN = os.environ["TOKEN"]
-application = Application.builder().token(TOKEN).pool_timeout(60).write_timeout(60).read_timeout(60).get_updates_read_timeout(60).build()
+SECRET_KEY = os.environ["SECRET_KEY"]
+PORT = int(os.environ.get('PORT', '8443'))
+application = Application.builder().token(TOKEN).read_timeout(60).get_updates_read_timeout(60).build()
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 aps_logger = logging.getLogger('apscheduler')
 aps_logger.setLevel(logging.WARNING)
@@ -75,4 +77,9 @@ async def spread_auto_messaging(context: ContextTypes.DEFAULT_TYPE) -> None:
 
 application.add_handler(CommandHandler("start", start_bot))
 
-application.run_polling(drop_pending_updates=True)
+application.run_webhook(
+    listen="0.0.0.0",
+    port=PORT,
+    secret_token=SECRET_KEY,
+    webhook_url="https://koronapay-spread.herokuapp.com/"
+)
