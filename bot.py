@@ -11,8 +11,7 @@ from telegram.constants import ParseMode
 TOKEN = os.environ["TOKEN"]
 application = Application.builder().token(TOKEN).read_timeout(60).get_updates_read_timeout(60).build()
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-aps_logger = logging.getLogger('apscheduler')
-aps_logger.setLevel(logging.WARNING)
+logger = logging.getLogger(__name__)
 
 def remove_job_if_exists(name: str, context: ContextTypes.DEFAULT_TYPE) -> bool:
     """Remove job with given name. Returns whether job was removed."""
@@ -74,7 +73,7 @@ async def spread_auto_messaging(context: ContextTypes.DEFAULT_TYPE) -> None:
 
 async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Log the error and send a telegram message to notify the developer."""
-    aps_logger.error("Exception while handling an update:", exc_info=context.error)
+    logger.error("Exception while handling an update:", exc_info=context.error)
 
     await context.bot.send_message(chat_id=update.effective_chat.id, text='Ошибка:(', parse_mode=ParseMode.HTML)
 
