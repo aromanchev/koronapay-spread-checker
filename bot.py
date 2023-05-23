@@ -106,5 +106,6 @@ application.add_error_handler(error_handler)
 application.run_webhook(listen = '0.0.0.0',
 	    port = 8443,
 	    url_path = TOKEN,
-	    webhook_url = 'https://koronapay-spread.herokuapp.com/' + TOKEN)
+        secret_token = 'koronapaytoken',
+	    webhook_url = 'https://koronapay-spread.herokuapp.com/')
 application.run_polling()
