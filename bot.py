@@ -102,7 +102,7 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
     await context.bot.send_message(chat_id=update.effective_chat.id, text='Ошибка:(', parse_mode=ParseMode.HTML)
 
 def main() -> None:
-    application = Application.builder().token("TOKEN").build()
+    application = Application.builder().token(TOKEN).build()
 
     application.add_error_handler(error_handler)
     application.add_handler(CommandHandler(["start"], start))
