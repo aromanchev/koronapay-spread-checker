@@ -1,5 +1,4 @@
 python-telegram-bot==20.3
 python-telegram-bot[job-queue]
-python-telegram-bot[webhooks]
 requests==2.30.0
 prettytable==3.7.0
