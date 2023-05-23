@@ -103,4 +103,8 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
 
 application.add_handler(CommandHandler("start", start_bot))
 application.add_error_handler(error_handler)
+application.run_webhook(listen = '0.0.0.0',
+	    port = 8443,
+	    url_path = TOKEN,
+	    webhook_url = 'https://koronapay-spread.herokuapp.com/' + TOKEN)
 application.run_polling()
