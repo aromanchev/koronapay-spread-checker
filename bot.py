@@ -88,7 +88,7 @@ async def start_bot(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await context.bot.send_message(chat_id=chat_id, text=f'Добро пожаловать @{update.message.from_user.username}!')
     await context.bot.send_message(chat_id=chat_id, text=f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
     remove_job_if_exists(str(chat_id), context)
-    context.job_queue.run_repeating(spread_auto_messaging, 300, chat_id=chat_id)
+    context.job_queue.run_repeating(spread_auto_messaging, 300, chat_id=chat_id, job_kwargs={'max_instances': 4})
 
 async def spread_auto_messaging(context: ContextTypes.DEFAULT_TYPE) -> None:
     job = context.job
