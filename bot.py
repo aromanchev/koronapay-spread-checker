@@ -10,7 +10,6 @@ from telegram.constants import ParseMode
 
 # ---------------------------- B0T CONFIG ------------------------------
 TOKEN = os.environ["TOKEN"]
-application = Application.builder().token(TOKEN).read_timeout(7).get_updates_read_timeout(42).build()
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -34,15 +33,6 @@ def get_exchangers() -> list[object]:
     response = requests.get(url = constants.EXCHANGE_RATE_API)
     data = response.json()['pageProps']['exchangesStaticProps']['usd']
     return data
-
-def remove_job_if_exists(name: str, context: ContextTypes.DEFAULT_TYPE) -> bool:
-    """Remove job with given name. Returns whether job was removed."""
-    current_jobs = context.job_queue.get_jobs_by_name(name)
-    if not current_jobs:
-        return False
-    for job in current_jobs:
-        job.schedule_removal()
-    return True
 
 # ---------------------------- UTILITY ------------------------------
 def calculate_spread(sending_amount: int, rate: int, binance_rate: int):
@@ -70,13 +60,11 @@ def create_table():
     for exchanger in exchangers:
         rate = exchanger['rates']['sellRate']
         company = exchanger['company']
-        spread = calculate_spread(
-            korona_pay_sending_amount, rate, binance_p2p_rate)
+        spread = calculate_spread(korona_pay_sending_amount, rate, binance_p2p_rate)
         table.add_row([company, f'{rate:.3f}', f'{spread}%'])
 
     table.add_row(['------------', '', ''])
-    table.add_row(
-        [f'\nKoronaPay GEL: ', f'\n{korona_pay_exchange_rate:.3f}', ''])
+    table.add_row([f'\nKoronaPay GEL: ', f'\n{korona_pay_exchange_rate:.3f}', ''])
 
     content = f'<pre>{table}</pre>'
     return content
@@ -87,8 +75,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     table = create_table()
     await context.bot.send_message(chat_id=chat_id, text=f'Добро пожаловать @{update.message.from_user.username}!')
     await context.bot.send_message(chat_id=chat_id, text=f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
-    remove_job_if_exists(str(chat_id), context)
-    context.job_queue.run_repeating(spread_auto_messaging, 300, chat_id=chat_id, job_kwargs={'max_instances': 4})
+    context.job_queue.run_repeating(spread_auto_messaging, 300, chat_id=chat_id, job_kwargs={'max_instances': 10})
 
 async def spread_auto_messaging(context: ContextTypes.DEFAULT_TYPE) -> None:
     job = context.job
@@ -99,10 +86,8 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
     """Log the error and send a telegram message to notify the developer."""
     logger.error("Exception while handling an update:", exc_info=context.error)
 
-    await context.bot.send_message(chat_id=update.effective_chat.id, text='Ошибка:(', parse_mode=ParseMode.HTML)
-
 def main() -> None:
-    application = Application.builder().token(TOKEN).build()
+    application = Application.builder().token(TOKEN).read_timeout(30).get_updates_read_timeout(42).build()
 
     application.add_error_handler(error_handler)
     application.add_handler(CommandHandler(["start"], start))
