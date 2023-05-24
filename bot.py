@@ -10,6 +10,7 @@ from telegram.constants import ParseMode
 
 # ---------------------------- B0T CONFIG ------------------------------
 TOKEN = os.environ["TOKEN"]
+application = Application.builder().token(TOKEN).read_timeout(30).get_updates_read_timeout(42).build()
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -73,9 +74,9 @@ def create_table():
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     chat_id = update.effective_chat.id
     table = create_table()
+    context.job_queue.run_repeating(spread_auto_messaging, 300, chat_id=chat_id, job_kwargs={'max_instances': 10})
     await context.bot.send_message(chat_id=chat_id, text=f'Добро пожаловать @{update.message.from_user.username}!')
     await context.bot.send_message(chat_id=chat_id, text=f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
-    context.job_queue.run_repeating(spread_auto_messaging, 300, chat_id=chat_id, job_kwargs={'max_instances': 10})
 
 async def spread_auto_messaging(context: ContextTypes.DEFAULT_TYPE) -> None:
     job = context.job
@@ -86,14 +87,6 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
     """Log the error and send a telegram message to notify the developer."""
     logger.error("Exception while handling an update:", exc_info=context.error)
 
-def main() -> None:
-    application = Application.builder().token(TOKEN).read_timeout(30).get_updates_read_timeout(42).build()
-
-    application.add_error_handler(error_handler)
-    application.add_handler(CommandHandler(["start"], start))
-
-    application.run_polling()
-
-
-if __name__ == "__main__":
-    main()
+application.add_error_handler(error_handler)
+application.add_handler(CommandHandler(["start"], start))
+application.run_polling()
