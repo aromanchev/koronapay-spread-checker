@@ -9,7 +9,6 @@ from telegram.ext import Application, CommandHandler, ContextTypes
 from telegram.constants import ParseMode
 
 # ---------------------------- B0T CONFIG ------------------------------
-PORT = int(os.environ.get('PORT', '8443'))
 TOKEN = os.environ["TOKEN"]
 application = Application.builder().token(TOKEN).read_timeout(30).get_updates_read_timeout(42).build()
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -91,4 +90,4 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
 if __name__ == '__main__':
     application.add_error_handler(error_handler)
     application.add_handler(CommandHandler(["start"], start))
-    application.run_webhook(listen="0.0.0.0", port=PORT, secret_token='b7c27da80ee14e36d4bea9c94a72f4d83edabe2956fd36d0c6fbfb1f0203', webhook_url='https://koronapay-spread.herokuapp.com/')
+    application.run_polling()
