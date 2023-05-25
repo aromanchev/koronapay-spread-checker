@@ -10,7 +10,6 @@ from telegram.constants import ParseMode
 
 # ---------------------------- B0T CONFIG ------------------------------
 TOKEN = os.environ["TOKEN"]
-PORT = int(os.environ.get('PORT', '8443'))
 application = Application.builder().token(TOKEN).read_timeout(30).get_updates_read_timeout(42).build()
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -91,5 +90,4 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
 if __name__ == 'main':
     application.add_error_handler(error_handler)
     application.add_handler(CommandHandler(["start"], start))
-    application.start_webhook(listen="0.0.0.0", port=PORT, url_path=TOKEN)
-    application.bot.set_webhook("https://koronapay-spread.herokuapp.com/" + TOKEN)
+    application.run_polling()
