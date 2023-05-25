@@ -10,7 +10,7 @@ from telegram.constants import ParseMode
 
 # ---------------------------- B0T CONFIG ------------------------------
 TOKEN = os.environ["TOKEN"]
-application = Application.builder().token(TOKEN).read_timeout(42).get_updates_read_timeout(42).build()
+application = Application.builder().token(TOKEN).read_timeout(300).get_updates_read_timeout(42).build()
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -87,7 +87,6 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
     """Log the error and send a telegram message to notify the developer."""
     logger.error("Exception while handling an update:", exc_info=context.error)
 
-if __name__ == '__main__':
-    application.add_error_handler(error_handler)
-    application.add_handler(CommandHandler(["start"], start))
-    application.run_polling()
+application.add_error_handler(error_handler)
+application.add_handler(CommandHandler(["start"], start))
+application.run_polling()
