@@ -10,7 +10,7 @@ from telegram.constants import ParseMode
 
 # ---------------------------- B0T CONFIG ------------------------------
 TOKEN = os.environ["TOKEN"]
-application = Application.builder().token(TOKEN).read_timeout(300).get_updates_read_timeout(42).build()
+application = Application.builder().token(TOKEN).write_timeout(60).read_timeout(60).get_updates_read_timeout(42).build()
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
