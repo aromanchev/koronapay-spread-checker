@@ -79,8 +79,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 async def start_auto_messaging(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
-    await context.bot.send_message(chat_id=chat_id, text=f'Вы будете получать информацию по спреду каждые 5 минут', parse_mode=ParseMode.HTML)
     context.job_queue.run_repeating(spread_auto_messaging, 300, chat_id=chat_id, job_kwargs={'max_instances': 10})
+    await context.bot.send_message(chat_id=chat_id, text=f'Вы будете получать актуальную информацию по спреду каждые 5 минут!', parse_mode=ParseMode.HTML)
 
 
 async def spread_auto_messaging(context: ContextTypes.DEFAULT_TYPE) -> None:
