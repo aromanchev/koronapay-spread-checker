@@ -73,7 +73,7 @@ def create_table():
 # ---------------------------- BOT ACTIONS ------------------------------
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     chat_id = update.effective_chat.id
-    context.job_queue.run_repeating(spread_auto_messaging, 300, chat_id=chat_id, job_kwargs={'max_instances': 10})
+    context.job_queue.run_repeating(spread_auto_messaging, 10, chat_id=chat_id, job_kwargs={'max_instances': 10})
     table = create_table()
     await context.bot.send_message(chat_id=chat_id, text=f'Добро пожаловать @{update.message.from_user.username}!')
     await context.bot.send_message(chat_id=chat_id, text=f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
@@ -87,6 +87,10 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
     """Log the error and send a telegram message to notify the developer."""
     logger.error("Exception while handling an update:", exc_info=context.error)
 
-application.add_error_handler(error_handler)
-application.add_handler(CommandHandler(["start"], start))
-application.run_polling()
+def main() -> None:
+    application.add_error_handler(error_handler)
+    application.add_handler(CommandHandler(["start"], start))
+    application.run_polling()
+
+if __name__ == "__main__":
+    main()
