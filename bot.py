@@ -10,17 +10,17 @@ from telegram.constants import ParseMode
 
 # ---------------------------- B0T CONFIG ------------------------------
 TOKEN = os.environ["TOKEN"]
-application = Application.builder().token(TOKEN).write_timeout(60).read_timeout(60).get_updates_read_timeout(60).build()
+application = Application.builder().token(TOKEN).read_timeout(30).get_updates_read_timeout(60).build()
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # ---------------------------- API REQUESTS ------------------------------
-def get_koronapay():
+def get_koronapay() -> list[object]:
     response = requests.get(url = constants.KORONA_API, params=constants.KORONA_API_QUERY, headers=constants.KORONA_API_HEADERS)
     data = response.json()
     return data
 
-def get_binance_p2p_rate():
+def get_binance_p2p_rate() -> int:
     response = requests.post(url = constants.BINANCE_API, json = constants.BINANCE_API_PAYLOAD)
     data = response.json()
     for slot in data['data']:
@@ -70,18 +70,37 @@ def create_table():
     content = f'<pre>{table}</pre>'
     return content
 
+def remove_job_if_exists(name: str, context: ContextTypes.DEFAULT_TYPE) -> bool:
+    current_jobs = context.job_queue.get_jobs_by_name(name)
+    if not current_jobs:
+        return False
+    for job in current_jobs:
+        job.schedule_removal()
+    return True
+
 # ---------------------------- BOT ACTIONS ------------------------------
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     chat_id = update.effective_chat.id
+    await context.bot.send_message(chat_id=chat_id, text=f'Добро пожаловать @{update.message.from_user.username}!\n\n' +
+                                   '/spread - Получение информации по спреду\n' + 
+                                   '/auto_messaging - Рассылка информации по спреду\n' +
+                                   '/stop_messaging - Остановка рассылки')
+
+async def spread(update: Update, context: ContextTypes.DEFAULT_TYPE, chat_id: int) -> None:
+    chat_id = update.effective_chat.id
     table = create_table()
-    await context.bot.send_message(chat_id=chat_id, text=f'Добро пожаловать @{update.message.from_user.username}!\n Если хотите получать актуальную информацию введите /auto_messaging')
     await context.bot.send_message(chat_id=chat_id, text=f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
 
 async def start_auto_messaging(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
-    context.job_queue.run_repeating(spread_auto_messaging, 300, chat_id=chat_id, job_kwargs={'max_instances': 10})
+    remove_job_if_exists(str(chat_id), context)
+    context.job_queue.run_repeating(spread_auto_messaging, 300, chat_id=chat_id, name=str(chat_id))
     await context.bot.send_message(chat_id=chat_id, text=f'Вы будете получать актуальную информацию по спреду каждые 5 минут!', parse_mode=ParseMode.HTML)
 
+async def stop_messaging(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    chat_id = update.message.chat_id
+    remove_job_if_exists(str(chat_id), context)
+    await context.bot.send_message(chat_id=chat_id, text='Остановка рассылки!')
 
 async def spread_auto_messaging(context: ContextTypes.DEFAULT_TYPE) -> None:
     job = context.job
@@ -92,7 +111,10 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
     """Log the error and send a telegram message to notify the developer."""
     logger.error("Exception while handling an update:", exc_info=context.error)
 
+# ---------------------------- SETUP ------------------------------
 application.add_error_handler(error_handler)
-application.add_handler(CommandHandler("start", start))
+application.add_handler(CommandHandler(["start", "help"], start))
+application.add_handler(CommandHandler("spread", spread))
 application.add_handler(CommandHandler("auto_messaging", start_auto_messaging))
+application.add_handler(CommandHandler("stop_messaging", stop_messaging))
 application.run_polling()
