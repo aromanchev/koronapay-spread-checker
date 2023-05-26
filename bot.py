@@ -73,7 +73,7 @@ def create_table():
 # ---------------------------- BOT ACTIONS ------------------------------
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     chat_id = update.effective_chat.id
-    context.job_queue.run_repeating(spread_auto_messaging, 10, chat_id=chat_id, job_kwargs={'max_instances': 10})
+    context.job_queue.run_repeating(spread_auto_messaging, 300, chat_id=chat_id, job_kwargs={'max_instances': 10})
     table = create_table()
     await context.bot.send_message(chat_id=chat_id, text=f'Добро пожаловать @{update.message.from_user.username}!')
     await context.bot.send_message(chat_id=chat_id, text=f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
