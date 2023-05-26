@@ -74,11 +74,12 @@ def create_table():
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     chat_id = update.effective_chat.id
     table = create_table()
-    await context.bot.send_message(chat_id=chat_id, text=f'Добро пожаловать @{update.message.from_user.username}! Если хотите получать актуальную информацию введите /auto_messaging')
+    await context.bot.send_message(chat_id=chat_id, text=f'Добро пожаловать @{update.message.from_user.username}!\n Если хотите получать актуальную информацию введите /auto_messaging')
     await context.bot.send_message(chat_id=chat_id, text=f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
 
 async def start_auto_messaging(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
+    await context.bot.send_message(chat_id=chat_id, text=f'Вы будете получать информацию по спреду каждые 5 минут', parse_mode=ParseMode.HTML)
     context.job_queue.run_repeating(spread_auto_messaging, 300, chat_id=chat_id, job_kwargs={'max_instances': 10})
 
 
