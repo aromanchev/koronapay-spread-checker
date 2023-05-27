@@ -86,7 +86,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                                    '/auto_messaging - Рассылка информации по спреду\n' +
                                    '/stop_messaging - Остановка рассылки')
 
-async def spread(update: Update, context: ContextTypes.DEFAULT_TYPE, chat_id: int) -> None:
+async def get_spread(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     chat_id = update.effective_chat.id
     table = create_table()
     await context.bot.send_message(chat_id=chat_id, text=f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
@@ -114,7 +114,7 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
 # ---------------------------- SETUP ------------------------------
 application.add_error_handler(error_handler)
 application.add_handler(CommandHandler(["start", "help"], start))
-application.add_handler(CommandHandler("spread", spread))
+application.add_handler(CommandHandler("spread", get_spread))
 application.add_handler(CommandHandler("auto_messaging", start_auto_messaging))
 application.add_handler(CommandHandler("stop_messaging", stop_messaging))
 application.run_polling()
