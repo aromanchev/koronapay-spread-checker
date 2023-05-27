@@ -10,6 +10,7 @@ from telegram.constants import ParseMode
 
 # ---------------------------- B0T CONFIG ------------------------------
 TOKEN = os.environ["TOKEN"]
+WEBHOOK_SECRET = os.environ["WEBHOOK_SECRET"]
 PORT = int(os.environ.get('PORT', '8443'))
 application = Application.builder().token(TOKEN).read_timeout(30).get_updates_read_timeout(60).build()
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -121,6 +122,6 @@ application.add_handler(CommandHandler("stop_messaging", stop_messaging))
 application.run_webhook(
         listen="0.0.0.0",
         port=int(PORT),
-        secret_token="b00921e0b2179bccc3221c84050e5fcd24b1d1d60da4cb156c78d5e2ffb1",
+        secret_token=WEBHOOK_SECRET,
         webhook_url='https://koronapay-spread.herokuapp.com/'
     )
