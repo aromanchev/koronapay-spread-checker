@@ -121,6 +121,6 @@ application.add_handler(CommandHandler("stop_messaging", stop_messaging))
 application.run_webhook(
         listen="0.0.0.0",
         port=int(PORT),
-        secret_token="123ef55338c8c30a61d2aae399c1cb8502d6c3b2c3d7143f01d7be5e4bf6",
+        secret_token="b00921e0b2179bccc3221c84050e5fcd24b1d1d60da4cb156c78d5e2ffb1",
         webhook_url='https://koronapay-spread.herokuapp.com/'
     )
