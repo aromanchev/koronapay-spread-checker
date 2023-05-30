@@ -2,7 +2,6 @@ import logging
 import constants
 import os
 import requests
-import constants
 import prettytable
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
