@@ -11,7 +11,7 @@ from telegram.constants import ParseMode
 TOKEN = os.environ["TOKEN"]
 PORT = int(os.environ.get('PORT', '8443'))
 WEBHOOK_SECRET = os.environ["WEBHOOK_SECRET"]
-application = Application.builder().token(TOKEN).read_timeout(30).get_updates_read_timeout(60).build()
+application = Application.builder().token(TOKEN).build()
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
