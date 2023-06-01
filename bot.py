@@ -4,14 +4,15 @@ import os
 import requests
 import prettytable
 from telegram import Update
-from telegram.ext import Application, CommandHandler, ContextTypes
+from telegram.ext import Application, CommandHandler, ContextTypes, Defaults
 from telegram.constants import ParseMode
 
 # ---------------------------- B0T CONFIG ------------------------------
 TOKEN = os.environ["TOKEN"]
 PORT = int(os.environ.get('PORT', '8443'))
 WEBHOOK_SECRET = os.environ["WEBHOOK_SECRET"]
-application = Application.builder().token(TOKEN).build()
+defaults = Defaults(parse_mode=ParseMode.HTML)
+application = Application.builder().defaults(defaults).token(TOKEN).build()
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -90,13 +91,13 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 async def get_spread(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     chat_id = update.effective_chat.id
     table = create_table()
-    await context.bot.send_message(chat_id=chat_id, text=f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
+    await context.bot.send_message(chat_id=chat_id, text=f'<pre>{table}</pre>')
 
 async def start_auto_messaging(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
     remove_job_if_exists(str(chat_id), context)
     context.job_queue.run_repeating(spread_auto_messaging, 300, chat_id=chat_id, name=str(chat_id))
-    await context.bot.send_message(chat_id=chat_id, text=f'Вы будете получать актуальную информацию по спреду каждые 5 минут!', parse_mode=ParseMode.HTML)
+    await context.bot.send_message(chat_id=chat_id, text=f'Вы будете получать актуальную информацию по спреду каждые 5 минут!')
 
 async def stop_messaging(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.message.chat_id
@@ -106,7 +107,7 @@ async def stop_messaging(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def spread_auto_messaging(context: ContextTypes.DEFAULT_TYPE) -> None:
     job = context.job
     table = create_table()
-    await context.bot.send_message(chat_id=job.chat_id, text=f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
+    await context.bot.send_message(chat_id=job.chat_id, text=f'<pre>{table}</pre>')
 
 async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Log the error and send a telegram message to notify the developer."""
