@@ -1,4 +1,4 @@
-EXCHANGE_RATE_API = 'https://mapi.ge/_next/data/Id9M_PzvWg56xBII11XLF/index.json'
+EXCHANGE_RATE_API = 'https://mapi.ge/_next/data/ty4AnERq_MgRqKTHgSIT_/index.json'
 
 KORONA_RECEIVING_AMOUNT = 400000
 KORONA_API = 'https://koronapay.com/transfers/online/api/transfers/tariffs'
